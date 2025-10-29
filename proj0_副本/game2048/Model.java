@@ -129,15 +129,15 @@ public class Model extends Observable {
     /**
      * 判断当前tile上方最接近的下一个存在的tile是相同的还是不同的，还是上方全空
      */
-    public int up_state(Tile tile) {
+    public int up_state(Tile tile, Board b) {
 
 
         int x = tile.col();
         boolean all_null = true;
         for (int y = tile.row() + 1; y <= 3; y++) {
-            if (board.tile(x, y) != null) {
+            if (b.tile(x, y) != null) {
                 all_null = false;
-                if (board.tile(x, y).value() != tile.value()) {
+                if (b.tile(x, y).value() != tile.value()) {
                     return 1; /* "the next up tile is different"*/
                 } else {
                     return 2;/* the next up tile is the same */
@@ -173,6 +173,7 @@ public class Model extends Observable {
      * Tilt the board toward SIDE. Return true iff this changes the board.
      */
     public boolean tilt(Side side) {
+        // 设置视角，只在 tilt 方法开始时设置一次
         if (side == Side.EAST) board.setViewingPerspective(Side.EAST);
         if (side == Side.WEST) board.setViewingPerspective(Side.WEST);
         if (side == Side.SOUTH) board.setViewingPerspective(Side.SOUTH);
@@ -182,26 +183,25 @@ public class Model extends Observable {
 
         for (int x = 0; x <= 3; x++) {
             for (int y = 2; y >= 0; y--) {
-                Tile current_tile = board.tile(x, y);
+                Tile current_tile = this.board.tile(x, y);
 
                 if (current_tile == null) {
-
                     continue;
                 }
 
                 // 调用 up_state 方法时，不再传递 side，也不在这里更改视角
-                int state = up_state(current_tile);
+                int state = up_state(current_tile, this.board);
+
                 if (state == 3) {
-                    board.move(x, 3, current_tile);
+                    this.board.move(x, 3, current_tile);
                     changed = true;
-                    continue;
                 } else if (state == 2) {
                     int x0 = current_tile.col();
                     Tile closettile = null;
 
                     for (int y0 = current_tile.row() + 1; y0 <= 3; y0++) {
-                        if (board.tile(x0, y0) != null) {
-                            closettile = board.tile(x0, y0);
+                        if (this.board.tile(x0, y0) != null) {
+                            closettile = this.board.tile(x0, y0);
                             break;
                         }
                     }
@@ -210,12 +210,12 @@ public class Model extends Observable {
                     int y1 = closettile.row();
 
                     if (!hasmerged[x1][y1]) {
-                        board.move(x1, y1, current_tile);
+                        this.board.move(x1, y1, current_tile);
                         this.score += 2 * current_tile.value();
                         hasmerged[x1][y1] = true;
                         changed = true;
                     } else {
-                        board.move(x1, y1 - 1, current_tile);
+                        this.board.move(x1, y1 - 1, current_tile);
                         changed = true;
                     }
                 } else if (state == 1) {
@@ -223,8 +223,8 @@ public class Model extends Observable {
                     Tile closettile = null;
 
                     for (int y0 = current_tile.row() + 1; y0 <= 3; y0++) {
-                        if (board.tile(x0, y0) != null) {
-                            closettile = board.tile(x0, y0);
+                        if (this.board.tile(x0, y0) != null) {
+                            closettile = this.board.tile(x0, y0);
                             break;
                         }
                     }
@@ -232,7 +232,7 @@ public class Model extends Observable {
                     int x1 = closettile.col();
                     int y1 = closettile.row();
 
-                    board.move(x1, y1 - 1, current_tile);
+                    this.board.move(x1, y1 - 1, current_tile);
                     changed = true;
                 }
             }
