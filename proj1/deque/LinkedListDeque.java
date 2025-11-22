@@ -1,6 +1,6 @@
 package deque;
-
-import org.w3c.dom.Node;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class LinkedListDeque<Item> {
 
@@ -73,9 +73,13 @@ public class LinkedListDeque<Item> {
             if (isEmpty()) {
                 return null;
             }
-            Item result = this.getlast();
-            backsen.leftnode.leftnode.rightnode = backsen;
-            backsen.leftnode = backsen.leftnode.leftnode;
+            intnode toRemove = backsen.leftnode;
+            Item result = toRemove.item;
+            backsen.leftnode = toRemove.leftnode;
+            backsen.leftnode.rightnode = backsen;
+            toRemove.leftnode = null;
+            toRemove.rightnode = null;
+            toRemove.item = null;
             size--;
             return  result;
         }
@@ -98,9 +102,13 @@ public class LinkedListDeque<Item> {
         if (isEmpty()) {
             return null;  // 或者抛出异常
         }
-        Item result = this.getfirst();
-        frontsen.rightnode.rightnode.leftnode = frontsen;
-        frontsen.rightnode = frontsen.rightnode.rightnode;
+        intnode toRemove = frontsen.rightnode;
+        Item result = toRemove.item;
+        frontsen.rightnode = toRemove.rightnode;
+        frontsen.rightnode.leftnode = frontsen;
+        toRemove.leftnode = null;
+        toRemove.rightnode = null;
+        toRemove.item = null;
         size--;
         return  result;
     }

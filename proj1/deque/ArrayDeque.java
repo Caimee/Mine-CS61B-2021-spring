@@ -3,36 +3,88 @@ package deque;
 public class ArrayDeque<Item> {
     private Item [] items;
     private int size;
+    private int nextFirst;
+    private int nextLast;
 
     public ArrayDeque(){
         items = (Item[]) new Object[8];
+        nextFirst = 3;
+        nextLast = 4;
         size = 0;
     }
 
-    public void add(Item a){
+    public int update_front(int x){
+        return (x - 1 + items.length) % items.length;
+    }
+
+    public int update_back(int x){
+        return  (x + 1) % items.length;
+    }
+
+    public void addLast(Item a){
         if (items.length == size){
             resize(size*2);
         }
+        items[nextLast] = a;
+        nextLast = update_back(nextLast);
         size++;
-        items[size] = a;
-
 
     }
 
+    public void addFirst(Item a){
+        if (items.length == size){
+            resize(items.length*2);
+        }
+        items[nextFirst] = a;
+        nextFirst = update_front(nextFirst);
+        size++;
+    }
     public void resize(int x){
         Item[] a = (Item[]) new Object[x];
-        System.arraycopy(items, 0, a, 0, size);
+       int start = update_back(nextFirst);
+       for (int i = 0;i < size; i++){
+           a[i] = items[(start + i)% items.length];
+       }
         items = a;
-
+       nextFirst = x - 1;
+       nextLast = size;
     }
-    public Item remove(){
+    public Item removeLast(){
+        if (isEmpty()) return null;
+        int index = update_front(nextLast);
+        nextLast = index;
+         Item result = items[index];
+        items[index] = null;
         size--;
-        return get(size - 1);
-    }
-    public Item get(int x){
-        return items[x];
+        if (items.length >= 16 && size < items.length / 4){
+            resize(items.length / 2);
+        }
+        return result;
     }
 
+    public Item removeFirst(){
+        if (isEmpty()) return null;
+        int index = update_back(nextFirst);
+        nextFirst = index;
+        Item result = items[index];
+        items[index] = null;
+        size--;
+        if (items.length >= 16 && size < items.length / 4){
+            resize(items.length / 2);
+        }
+        return result;
+    }
+
+    public Item get(int i){
+        int start = update_back(nextFirst);
+        int index = (start + i) % items.length;
+        return items[index];
+    }
+
+    public Boolean isEmpty(){
+
+        return  size == 0;
+    }
 
 
 
