@@ -1,13 +1,13 @@
 package deque;
 
-public class ArrayDeque<Item> {
-    private Item [] items;
+public class ArrayDeque<T> implements Deque<T>{
+    private T [] items;
     private int size;
     private int nextFirst;
     private int nextLast;
 
     public ArrayDeque(){
-        items = (Item[]) new Object[8];
+        items = (T[]) new Object[8];
         nextFirst = 3;
         nextLast = 4;
         size = 0;
@@ -20,8 +20,8 @@ public class ArrayDeque<Item> {
     public int update_back(int x){
         return  (x + 1) % items.length;
     }
-
-    public void addLast(Item a){
+@Override
+    public void addLast(T a){
         if (items.length == size){
             resize(size*2);
         }
@@ -30,8 +30,8 @@ public class ArrayDeque<Item> {
         size++;
 
     }
-
-    public void addFirst(Item a){
+@Override
+    public void addFirst(T a){
         if (items.length == size){
             resize(items.length*2);
         }
@@ -40,7 +40,7 @@ public class ArrayDeque<Item> {
         size++;
     }
     public void resize(int x){
-        Item[] a = (Item[]) new Object[x];
+        T[] a = (T[]) new Object[x];
        int start = update_back(nextFirst);
        for (int i = 0;i < size; i++){
            a[i] = items[(start + i)% items.length];
@@ -49,11 +49,12 @@ public class ArrayDeque<Item> {
        nextFirst = x - 1;
        nextLast = size;
     }
-    public Item removeLast(){
+    @Override
+    public T removeLast(){
         if (isEmpty()) return null;
         int index = update_front(nextLast);
         nextLast = index;
-         Item result = items[index];
+         T result = items[index];
         items[index] = null;
         size--;
         if (items.length >= 16 && size < items.length / 4){
@@ -62,11 +63,18 @@ public class ArrayDeque<Item> {
         return result;
     }
 
-    public Item removeFirst(){
+    @Override
+    public void printDeque() {
+        for (int i = 0; i < size; i++) {
+            System.out.print(get(i) + " ");
+        }
+    }
+@Override
+    public  T removeFirst(){
         if (isEmpty()) return null;
         int index = update_back(nextFirst);
         nextFirst = index;
-        Item result = items[index];
+        T result = items[index];
         items[index] = null;
         size--;
         if (items.length >= 16 && size < items.length / 4){
@@ -74,16 +82,15 @@ public class ArrayDeque<Item> {
         }
         return result;
     }
-
-    public Item get(int i){
+@Override
+    public T get(int i){
         int start = update_back(nextFirst);
         int index = (start + i) % items.length;
         return items[index];
     }
 
-    public Boolean isEmpty(){
-
-        return  size == 0;
+    public int size(){
+        return this.size;
     }
 
 
