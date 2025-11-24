@@ -128,4 +128,44 @@ public class LinkedListDequeTest {
 
 
     }
+
+    @Test
+    /*Add my randomized test*/
+    public void randomizedTest() {
+        StanderdForTest<Integer> L = new StanderdForTest<>();
+        LinkedListDeque<Integer> R =new LinkedListDeque<>();
+
+        int N = 500000;
+        for(int i = 1; i <= N;i++){
+            int x = (int)(Math.random() * 4);
+            if (x == 0){
+                int ranval = (int)(Math.random() * 1000);
+                L.addLast(ranval);
+                R.addLast(ranval);
+                System.out.println("both addLast(ranval)");
+            }
+            else if (x == 1){
+                if(L.size() <= 0 || R.size() <= 0){
+                    continue;
+                }
+                assertEquals(L.removeLast(),R.removeLast());
+                System.out.println("both removeLast");
+            }
+            else if(x == 2){
+                int size = L.size();
+                System.out.println("size: " + size);
+                assertEquals(L.size(),R.size());
+            }
+
+            else if(x == 3){
+                int ranval = (int)(Math.random() * L.size());
+                assertEquals(L.get(ranval),R.get(ranval));
+                System.out.println("getlast");
+            }
+
+
+
+        }
+
+    }
 }
